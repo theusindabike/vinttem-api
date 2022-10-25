@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'test_without_migrations',
     'rest_framework',
     'vintem_api.person',
+    'vintem_api.transactions',
 ]
 
 
