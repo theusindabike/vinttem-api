@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework import permissions
+from vintem_api.transactions.models import Transaction, TransactionSerializer
 
-# Create your views here.
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+    #permission_classes = [permissions.IsAuthenticated]

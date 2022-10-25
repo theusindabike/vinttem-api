@@ -1,9 +1,5 @@
 from django.db import models
 from rest_framework import serializers
-from django.utils.translation import gettext_lazy as _
-
-
-from vintem_api.person.models import Person
 
 
 class Transaction(models.Model):
@@ -12,7 +8,7 @@ class Transaction(models.Model):
         INCOME = 'I',
         EXPENSE = 'E',
 
-    #person = models.ForeignKey(Person, on_delete=models.CASCADE)
+   #person = models.ForeignKey(Person, on_delete=models.CASCADE)
     kind = models.CharField('tipo', max_length=1, choices=TransactionType.choices)
     description = models.CharField('descrição', max_length=255)
     value = models.DecimalField('valor', max_digits=16, decimal_places=2)

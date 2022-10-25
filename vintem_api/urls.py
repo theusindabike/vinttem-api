@@ -20,5 +20,6 @@ BASE_PATH = 'vintem_api'
 
 urlpatterns = [
     path('person/', include(f'{BASE_PATH}.person.urls')),
+    path('transactions/', include(f'{BASE_PATH}.transactions.urls')),
     path('admin/', admin.site.urls),
 ]
