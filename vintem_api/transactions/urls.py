@@ -1,11 +1,9 @@
 from django.urls import path, include
-from rest_framework import routers
 from . import views
 
-router = routers.DefaultRouter()
-router.register(r'', views.TransactionViewSet)
+app_name = 'transactions'
 
 urlpatterns = [
     # path('', views.index, name='index'),
-    path('', include(router.urls)),
+    path('', views.transactions_list),
 ]

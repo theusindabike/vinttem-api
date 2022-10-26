@@ -6,7 +6,7 @@ from vintem_api.transactions.models import Transaction
 class TransactionModelTest(TestCase):
     def setUp(self):
         self.obj = Transaction(
-            kind=Transaction.TransactionType.INCOME,
+            type=Transaction.TransactionType.INCOME,
             description='descrição teste',
             value='12.34'
         )
