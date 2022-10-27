@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from rest_framework import serializers
 
@@ -7,7 +8,7 @@ class Transaction(models.Model):
         INCOME = 'I',
         EXPENSE = 'E',
 
-    # person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', related_name='transactions', on_delete=models.CASCADE)
     type = models.CharField('tipo', max_length=1, choices=TransactionType.choices)
     description = models.CharField('descrição', max_length=255, null=True, blank=True)
     value = models.DecimalField('valor', max_digits=16, decimal_places=2)
@@ -17,4 +18,13 @@ class Transaction(models.Model):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['id', 'description', 'value', 'type', 'created_at']
+        fields = ['id', 'description', 'value', 'type', 'owner', 'created_at']
+        owner = serializers.ReadOnlyField(source='owner.username')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    transactions = serializers.PrimaryKeyRelatedField(many=True, queryset=Transaction.objects.all())
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'transactions']

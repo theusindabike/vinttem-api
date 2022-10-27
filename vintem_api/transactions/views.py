@@ -1,18 +1,34 @@
-from django.http import Http404
+from rest_framework import authentication, permissions, status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions, status, generics
-from vintem_api.transactions.models import Transaction, TransactionSerializer
+from django.http import Http404
+from django.contrib.auth.models import User
+from vintem_api.transactions.models import Transaction, TransactionSerializer, UserSerializer
 
 
 class TransactionList(generics.ListCreateAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class TransactionListOld(APIView):
