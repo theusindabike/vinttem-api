@@ -16,10 +16,10 @@ class Transaction(models.Model):
 
 
 class TransactionSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Transaction
         fields = ['id', 'description', 'value', 'type', 'owner', 'created_at']
-        owner = serializers.ReadOnlyField(source='owner.username')
 
 
 class UserSerializer(serializers.ModelSerializer):
