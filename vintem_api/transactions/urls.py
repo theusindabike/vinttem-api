@@ -1,9 +1,13 @@
 from django.urls import path, include
 from . import views
+from rest_framework.urlpatterns import format_suffix_patterns
 
 app_name = 'transactions'
 
 urlpatterns = [
     # path('', views.index, name='index'),
-    path('', views.transactions_list),
+    path('', views.TransactionList.as_view()),
+    path('<int:pk>/', views.TransactionDetail.as_view()),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)

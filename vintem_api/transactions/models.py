@@ -11,7 +11,7 @@ class Transaction(models.Model):
     type = models.CharField('tipo', max_length=1, choices=TransactionType.choices)
     description = models.CharField('descrição', max_length=255, null=True, blank=True)
     value = models.DecimalField('valor', max_digits=16, decimal_places=2)
-    created_at = models.DateTimeField('criado em', auto_now_add=True, null=True, blank=True)
+    created_at = models.DateTimeField('criado em', auto_now_add=True)
 
 
 class TransactionSerializer(serializers.ModelSerializer):
