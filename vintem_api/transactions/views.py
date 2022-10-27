@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.http import Http404
 from django.contrib.auth.models import User
 from vintem_api.transactions.models import Transaction, TransactionSerializer, UserSerializer
+from vintem_api.transactions.permissions import IsOwnerOrReadOnly
 
 
 class TransactionList(generics.ListCreateAPIView):
@@ -18,7 +19,8 @@ class TransactionList(generics.ListCreateAPIView):
 class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
+                          IsOwnerOrReadOnly]
 
 
 class UserList(generics.ListAPIView):

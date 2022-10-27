@@ -1,3 +1,4 @@
+from statistics import mode
 from django.contrib.auth.models import User
 from django.db import models
 from rest_framework import serializers
@@ -13,6 +14,7 @@ class Transaction(models.Model):
     description = models.CharField('descrição', max_length=255, null=True, blank=True)
     value = models.DecimalField('valor', max_digits=16, decimal_places=2)
     created_at = models.DateTimeField('criado em', auto_now_add=True)
+
 
 
 class TransactionSerializer(serializers.ModelSerializer):
