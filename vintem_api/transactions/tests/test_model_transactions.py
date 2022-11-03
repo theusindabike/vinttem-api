@@ -3,7 +3,7 @@ from django.test import TestCase
 from vintem_api.transactions.models import Transaction
 
 
-class TransactionModelTest(TestCase):
+class TransactionModelTest(TestCase):    
     def setUp(self):
         self.obj = Transaction(
             type=Transaction.TransactionType.INCOME,
@@ -12,7 +12,8 @@ class TransactionModelTest(TestCase):
         )
         self.obj.save()
 
-    def test_create(self):
-        self.assertTrue(Transaction.objects.exists())
+    
+    # def test_create(self):
+    #     self.assertTrue(Transaction.objects.exists())
 
 
