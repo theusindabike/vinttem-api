@@ -11,18 +11,20 @@ from vintem_api.transactions.models import Transaction
 
 class TransactionAPITest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user('user_1', 'user_1@email.com', 'user_1_password')
+        self.user_1 = User.objects.create_user('user_1', 'user_1@email.com', 'user_1_password')
+        self.user_2 = User.objects.create_user('user_2', 'user_2@email.com', 'user_2_password')
         self.client = APIClient()
 
         self.client.login(username='user_1', password='user_1_password')
 
         url = reverse('transactions:transaction-list')
         data = {
-            "description": "test description",
-            "value": 13,
+            "description": "test description 1",
+            "value": 11,
             "type": Transaction.TransactionType.EXPENSE
         }
         self.client.post(url, data)
+        self.client.logout()
 
     def tearDown(self):
         self.client.logout()
@@ -31,25 +33,37 @@ class TransactionAPITest(APITestCase):
         """
         Ensure we can get a transaction object.
         """
-        url = reverse('transactions:transaction-detail', args=[self.user.id])
+        url = reverse('transactions:transaction-detail', args=[self.user_1.id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Transaction.objects.count(), 1)
-        self.assertEqual(Transaction.objects.get().description, 'test description')
+        self.assertEqual(Transaction.objects.get().description, 'test description 1')
 
     def test_list(self):
         """
-        Ensure we can list all user transactions
+        Ensure we can list all logged user transactions
         """
-        self.client.login(username='user_1', password='user_1_password')
+        self.client.login(username='user_2', password='user_2_password')
         url = reverse('transactions:transaction-list')
         data = {
             "description": "test description 2",
-            "value": 1313,
+            "value": 12,
+            "type": Transaction.TransactionType.EXPENSE
+        }
+        self.client.post(url, data)
+        self.client.logout()
+
+        self.client.login(username='user_1', password='user_1_password')
+        url = reverse('transactions:transaction-list')
+        data = {
+            "description": "test description 3",
+            "value": 13,
             "type": Transaction.TransactionType.INCOME
         }
-        response = self.client.post(url, data)
+        self.client.post(url, data)
+
+        response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Transaction.objects.count(), 2)
