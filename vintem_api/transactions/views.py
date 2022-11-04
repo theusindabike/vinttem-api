@@ -20,17 +20,5 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
                           IsOwnerOrReadOnly]
 
 
-class UserList(generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, 
-                          IsOwnerOrReadOnly]
+class TransactionClosing(generics.ListAPIView):
+    pass

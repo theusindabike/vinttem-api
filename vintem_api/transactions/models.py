@@ -16,9 +16,9 @@ class Transaction(models.Model):
     created_at = models.DateTimeField('criado em', auto_now_add=True)
 
 
-
 class TransactionSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = Transaction
         fields = ['id', 'description', 'value', 'type', 'owner', 'created_at']
