@@ -1,6 +1,6 @@
 from rest_framework import permissions, generics
-from django.contrib.auth.models import User
-from vintem_api.transactions.models import Transaction, TransactionSerializer, UserSerializer
+
+from vintem_api.transactions.models import Transaction, TransactionSerializer
 from vintem_api.transactions.permissions import IsOwnerOrReadOnly
 
 

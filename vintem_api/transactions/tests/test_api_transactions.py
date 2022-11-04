@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from unittest import skip
 
 from django.contrib.auth.models import User
@@ -58,15 +59,21 @@ class TransactionAPITest(APITestCase):
         """
         Ensure we can Sum all user expense transactions
         """
-
         self.client.login(username='user_1', password='user_1_password')
-        url = reverse('transactions:transaction-closing')
+        url = reverse('transactions:transaction-list')
         data = {
             "description": "test description 2",
             "value": 1313.13,
             "type": Transaction.TransactionType.EXPENSE
         }
+        self.client.post(url, data)
+
+        url = reverse('transactions:transaction-closing')
+        data = {
+            "start_date": datetime.today() - timedelta(days=1),
+            "end_date": datetime.today() + timedelta(days=1)
+        }
         response = self.client.get(url, data)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Transaction.objects.count(), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # self.assertEqual(Transaction.objects.count(), 2)
