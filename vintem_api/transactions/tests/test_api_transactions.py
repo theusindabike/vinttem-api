@@ -1,3 +1,4 @@
+import pdb
 from datetime import datetime, timedelta
 from unittest import skip
 
@@ -63,10 +64,10 @@ class TransactionAPITest(APITestCase):
         }
         self.client.post(url, data)
 
-        response = self.client.post(url)
+        response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Transaction.objects.count(), 2)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Transaction.objects.count(), 3)
 
     @skip("")
     def test_expenses_sum(self):

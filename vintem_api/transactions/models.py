@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 from rest_framework import serializers
 
@@ -21,11 +20,3 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ['id', 'description', 'value', 'type', 'owner', 'created_at']
-
-
-class UserSerializer(serializers.ModelSerializer):
-    transactions = serializers.PrimaryKeyRelatedField(many=True, queryset=Transaction.objects.all())
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'transactions']

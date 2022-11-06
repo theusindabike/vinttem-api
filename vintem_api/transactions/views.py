@@ -6,7 +6,7 @@ from vintem_api.transactions.permissions import IsOwnerOrReadOnly
 
 
 class TransactionList(generics.ListCreateAPIView):
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.all().order_by('id')
     filter_backends = [LoggedUserFilter]
     serializer_class = TransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
