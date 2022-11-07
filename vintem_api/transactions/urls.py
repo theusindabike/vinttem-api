@@ -7,7 +7,7 @@ app_name = 'transactions'
 urlpatterns = [
     path('', views.TransactionList.as_view(), name='transaction-list'),
     path('<int:pk>/', views.TransactionDetail.as_view(), name='transaction-detail'),
-    path('', views.TransactionClosing.as_view(), name='transaction-closing'),
+    path('closing/', views.TransactionClosing.as_view(), name='transaction-closing'),
 
 ]
 

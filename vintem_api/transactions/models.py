@@ -20,3 +20,16 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = ['id', 'description', 'value', 'type', 'owner', 'created_at']
+
+
+class TransactionClosingSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    expenses_sum = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Transaction
+        fields = ['expenses_sum', 'owner', 'created_at']
+
+    def get_expenses_sum(self, obj):
+        t = Transaction.objects.all().filter(owner=self.context['request'].user)
+        return 123

@@ -10,18 +10,17 @@ from rest_framework.test import APITestCase, APIClient
 
 from vintem_api.transactions.models import Transaction
 
-TRANSACTION_CREATE_LIST_URL = reverse('transactions:transaction-list')
+TRANSACTION_CREATE_AND_LIST_URL = reverse('transactions:transaction-list')
 
 
 def create_transaction(self, description='test description', value=1,
                        transaction_type=Transaction.TransactionType.EXPENSE):
-    url = TRANSACTION_CREATE_LIST_URL
     data = {
         "description": description,
         "value": value,
         "type": transaction_type
     }
-    return self.client.post(url, data)
+    return self.client.post(TRANSACTION_CREATE_AND_LIST_URL, data)
 
 
 class TransactionAPITest(APITestCase):
@@ -31,7 +30,7 @@ class TransactionAPITest(APITestCase):
         self.client = APIClient()
 
         self.client.login(username='user_1', password='user_1_password')
-        self.transaction_1 = create_transaction(self, 'test description 1', 10, Transaction.TransactionType.EXPENSE) \
+        self.transaction_1 = create_transaction(self, 'test description 1', 1, Transaction.TransactionType.EXPENSE) \
             .data
 
         self.client.logout()
@@ -43,6 +42,7 @@ class TransactionAPITest(APITestCase):
         """
         Ensure we can get a transaction object.
         """
+        self.client.login(username='user_1', password='user_1_password')
         url = reverse('transactions:transaction-detail', args=[self.transaction_1.get('id')])
         response = self.client.get(url)
 
@@ -55,23 +55,22 @@ class TransactionAPITest(APITestCase):
         Ensure we can list all logged user transactions
         """
         self.client.login(username='user_2', password='user_2_password')
-        create_transaction(self, 'test description 2', 12, Transaction.TransactionType.EXPENSE)
+        create_transaction(self, 'test description 2', 2, Transaction.TransactionType.EXPENSE)
         self.client.logout()
 
         self.client.login(username='user_1', password='user_1_password')
-        create_transaction(self, 'test description 3', 13, Transaction.TransactionType.EXPENSE)
+        create_transaction(self, 'test description 3', 3, Transaction.TransactionType.EXPENSE)
 
-        response = self.client.get(TRANSACTION_CREATE_LIST_URL)
+        response = self.client.get(TRANSACTION_CREATE_AND_LIST_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get('count'), 2)
 
-    @skip("")
     def test_expenses_sum(self):
         """
         Ensure we can Sum all user expense transactions
         """
         self.client.login(username='user_1', password='user_1_password')
-        create_transaction(self, 'test description 4', 14, Transaction.TransactionType.EXPENSE)
+        create_transaction(self, 'test description 4', 4, Transaction.TransactionType.EXPENSE)
 
         url = reverse('transactions:transaction-closing')
         data = {
@@ -81,4 +80,5 @@ class TransactionAPITest(APITestCase):
         response = self.client.get(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertEqual(Transaction.objects.count(), 2)
+        #pdb.set_trace()
+        #self.assertEqual(response.data.get('expenses_sum'), 5)
