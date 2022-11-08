@@ -80,5 +80,4 @@ class TransactionAPITest(APITestCase):
         response = self.client.get(url, data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        #pdb.set_trace()
-        #self.assertEqual(response.data.get('expenses_sum'), 5)
+        self.assertEqual(response.data.get('expenses_total'), 5)

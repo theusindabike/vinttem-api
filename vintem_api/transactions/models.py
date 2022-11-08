@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from rest_framework import serializers
 
 
@@ -24,12 +25,14 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 class TransactionClosingSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    expenses_sum = serializers.SerializerMethodField()
+    expenses_total = serializers.SerializerMethodField()
 
     class Meta:
         model = Transaction
-        fields = ['expenses_sum', 'owner', 'created_at']
+        #fields = ['expenses_total', 'income_total', 'owner', 'created_at']
+        fields = ['expenses_total', 'owner', 'created_at']
 
-    def get_expenses_sum(self, obj):
-        t = Transaction.objects.all().filter(owner=self.context['request'].user)
-        return 123
+    def get_expenses_total(self, obj):
+        #t = Transaction.objects.all().filter(owner=self.context['request'].user)
+        return obj.filter(type='E').aggregate(expenses_total=Sum('value'))
+

@@ -1,5 +1,10 @@
+import pdb
+
+from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from vintem_api.filters import LoggedUserFilter, TransactionClosingFilter, TransactionFilter
 from vintem_api.transactions.models import Transaction, TransactionSerializer, TransactionClosingSerializer
@@ -11,7 +16,6 @@ class TransactionList(generics.ListCreateAPIView):
     filter_backends = [LoggedUserFilter, DjangoFilterBackend]
     filterset_class = TransactionFilter
     permission_classes = [permissions.IsAuthenticated]
-    #filterset_fields = ('id', 'type', 'created_at')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -24,21 +28,16 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class TransactionClosing(generics.ListAPIView):
-    queryset = Transaction.objects.all()
-    serializer_class = TransactionClosingSerializer
+    queryset = Transaction.objects.all().order_by('id')
     filter_backends = [LoggedUserFilter, DjangoFilterBackend]
-    filter_class = TransactionClosingFilter
+    filterset_class = TransactionClosingFilter
     permission_classes = [permissions.IsAuthenticated]
-    # filterset_fields = [
-    #     'expenses_sum',
-    # ]
 
-# def get_queryset(self):
-#     queryset = Transaction.objects.all().order_by('id')
-#     start_date = self.request.query_params.get('start_date', None)
-#     end_date = self.request.query_params.get('end_date', None)
-#
-#     if start_date is not None and end_date is not None:
-#         queryset = queryset.filter(created_at__gte=start_date, created_at__lte=end_date)
-#
-#     return queryset
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        expenses_total = queryset.filter(type='E').aggregate(expenses_total=Sum('value'))
+        incomes_total = queryset.filter(type='I').aggregate(incomes_total=Sum('value'))
+
+        data = expenses_total | incomes_total
+        return Response(data)

@@ -24,8 +24,7 @@ class TransactionFilter(FilterSet):
 class TransactionClosingFilter(FilterSet):
     from_created_at = DateFilter(field_name='created_at', lookup_expr='gte')
     to_created_at = DateFilter(field_name='created_at', lookup_expr='lte')
-    expenses_sum = NumberFilter(field_name='expenses_sum', lookup_expr='')
 
     class Meta:
         model = Transaction
-        fields = ['expenses_sum', 'created_at']
+        fields = ['created_at']
