@@ -1,10 +1,10 @@
 import pdb
-from datetime import datetime, timedelta
+from datetime import datetime
+from pytz import timezone as tz
 from unittest import skip
 
 from django.contrib.auth.models import User
 from django.urls import reverse
-
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
@@ -25,69 +25,66 @@ def create_transaction(self, description='test description', value=1,
 
 
 class TransactionAPITest(APITestCase):
+    fixtures = ['transactions.json', 'users.json']
+
     def setUp(self):
-        self.user_1 = User.objects.create_user('user_1', 'user_1@email.com', 'user_1_password')
-        self.user_2 = User.objects.create_user('user_2', 'user_2@email.com', 'user_2_password')
+        self.user_1 = User.objects.get(pk=1)
+        self.user_2 = User.objects.get(pk=2)
         self.client = APIClient()
 
     def tearDown(self):
-        self.client.logout()
+        self.client.force_authenticate(user=None)
 
     def test_get(self):
         """
         Ensure we can get a transaction object.
         """
-        self.client.login(username='user_1', password='user_1_password')
-        transaction_1 = create_transaction(self, 'test description 1', 1, Transaction.TransactionType.EXPENSE) \
-            .data
+        t = Transaction.objects.get(id=1)
 
-        url = reverse('transactions:transaction-detail', args=[transaction_1.get('id')])
+        self.client.force_authenticate(user=self.user_1)
+
+        url = reverse('transactions:transaction-detail', args=[t.id])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Transaction.objects.count(), 1)
-        self.assertEqual(Transaction.objects.get().description, 'test description 1')
+        self.assertEqual(response.data.get('id'), 1)
+        self.assertEqual(response.data.get('description'), 'description test 1')
 
     def test_list(self):
         """
         Ensure we can list all logged user transactions
         """
-        self.client.login(username='user_2', password='user_2_password')
-        create_transaction(self, 'test description 2', 2, Transaction.TransactionType.EXPENSE)
-        self.client.logout()
-
-        self.client.login(username='user_1', password='user_1_password')
-        create_transaction(self, 'test description 3', 3, Transaction.TransactionType.EXPENSE)
+        self.client.force_authenticate(user=self.user_1)
 
         response = self.client.get(TRANSACTION_CREATE_AND_LIST_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('count'), 1)
+        self.assertEqual(response.data.get('count'), 6)
 
     def test_transactions_closing(self):
         """
-        Ensure we can Sum all user expense transactions
+        Ensure we can Sum all user expense and income transactions
+        """
+        data = {
+            "from_created_at": datetime(2022, 4, 1, tzinfo=tz('America/Sao_Paulo')).strftime("%Y-%m-%d"),
+            "to_created_at": datetime(2022, 4, 30, tzinfo=tz('America/Sao_Paulo')).strftime("%Y-%m-%d")
+        }
+
+        self.client.force_authenticate(user=self.user_1)
+        user_1_response = self.client.get(TRANSACTION_CLOSING_URL, data)
+        self.client.force_authenticate(user=None)
+
+        self.client.force_authenticate(user=self.user_2)
+        user_2_response = self.client.get(TRANSACTION_CLOSING_URL, data)
+        self.client.force_authenticate(user=None)
+
+        self.assertEqual(user_1_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(user_1_response.data.get('expenses_total'), 10)
+        self.assertEqual(user_1_response.data.get('owner_id'), self.user_1.id)
+
+        self.assertEqual(user_2_response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_closing_date_filter(self):
+        """
+        Ensure that start and end date filters work
         """
         self.client.login(username='user_1', password='user_1_password')
-        create_transaction(self, 'test description 4', 4, Transaction.TransactionType.EXPENSE)
-        create_transaction(self, 'test description 5', 5, Transaction.TransactionType.EXPENSE)
-
-        data = {
-            "start_date": datetime.today() - timedelta(days=1),
-            "end_date": datetime.today() + timedelta(days=1)
-        }
-        response = self.client.get(TRANSACTION_CLOSING_URL, data)
-        self.client.logout()
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('expenses_total'), 9)
-        self.assertEqual(response.data.get('owner_id'), self.user_1.id)
-
-        self.client.login(username='user_2', password='user_2_password')
-        create_transaction(self, 'test description 6', 6, Transaction.TransactionType.EXPENSE)
-
-        response = self.client.get(TRANSACTION_CLOSING_URL, data)
-        self.client.logout()
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('expenses_total'), 6)
-        self.assertEqual(response.data.get('owner_id'), self.user_2.id)

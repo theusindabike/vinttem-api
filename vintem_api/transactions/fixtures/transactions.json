@@ -1,0 +1,79 @@
+[
+{
+    "model": "transactions.transaction",
+    "pk": 1,
+    "fields": {
+        "owner": 1,
+        "type": "E",
+        "description": "description test 1",
+        "value": "10.00",
+        "created_at": "2022-04-01T19:43:16.058Z"
+    }
+},
+{
+    "model": "transactions.transaction",
+    "pk": 2,
+    "fields": {
+        "owner": 1,
+        "type": "I",
+        "description": "description test 2",
+        "value": "11.00",
+        "created_at": "2022-04-01T19:51:40.496Z"
+    }
+},
+{
+    "model": "transactions.transaction",
+    "pk": 3,
+    "fields": {
+        "owner": 1,
+        "type": "E",
+        "description": "description test 3",
+        "value": "12.00",
+        "created_at": "2022-05-01T20:00:11.789Z"
+    }
+},
+{
+    "model": "transactions.transaction",
+    "pk": 4,
+    "fields": {
+        "owner": 1,
+        "type": "E",
+        "description": "description test 4",
+        "value": "13.00",
+        "created_at": "2022-06-01T23:33:01.945Z"
+    }
+},
+{
+    "model": "transactions.transaction",
+    "pk": 5,
+    "fields": {
+        "owner": 1,
+        "type": "E",
+        "description": "description test 5",
+        "value": "14.00",
+        "created_at": "2022-06-02T19:37:29.791Z"
+    }
+},
+{
+    "model": "transactions.transaction",
+    "pk": 6,
+    "fields": {
+        "owner": 2,
+        "type": "I",
+        "description": "description test 6",
+        "value": "15.00",
+        "created_at": "2022-06-03T20:12:52.437Z"
+    }
+},
+{
+    "model": "transactions.transaction",
+    "pk": 7,
+    "fields": {
+        "owner": 1,
+        "type": "I",
+        "description": "description test 7",
+        "value": "17.00",
+        "created_at": "2022-07-01T17:26:41.134Z"
+    }
+}
+]

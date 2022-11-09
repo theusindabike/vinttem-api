@@ -1,13 +1,14 @@
 import pdb
 
 from django.db.models import Sum, Min, Max
+from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from vintem_api.filters import LoggedUserFilter, TransactionClosingFilter, TransactionFilter
-from vintem_api.transactions.models import Transaction, TransactionSerializer, TransactionClosingSerializer
+from vintem_api.transactions.models import Transaction, TransactionSerializer
 
 
 class TransactionList(generics.ListCreateAPIView):
@@ -27,22 +28,25 @@ class TransactionDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class TransactionClosing(generics.ListAPIView):
+class TransactionClosing(generics.RetrieveAPIView):
     queryset = Transaction.objects.all().order_by('id')
     filter_backends = [LoggedUserFilter, DjangoFilterBackend]
     filterset_class = TransactionClosingFilter
     permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
 
-        expenses_total = queryset.filter(type='E').aggregate(expenses_total=Sum('value'))
-        incomes_total = queryset.filter(type='I').aggregate(incomes_total=Sum('value'))
+        try:
+            owner_id = queryset.first().owner_id
 
-        min_date = queryset.aggregate(min_date=Min('created_at'))
-        max_date = queryset.aggregate(max_date=Max('created_at'))
+            expenses_total = queryset.filter(type='E').aggregate(expenses_total=Sum('value'))
+            incomes_total = queryset.filter(type='I').aggregate(incomes_total=Sum('value'))
 
-        owner_id = queryset.first().owner_id
+            min_date = queryset.aggregate(min_date=Min('created_at'))
+            max_date = queryset.aggregate(max_date=Max('created_at'))
 
-        data = expenses_total | incomes_total | min_date | max_date | {'owner_id': owner_id}
-        return Response(data)
+            data = expenses_total | incomes_total | min_date | max_date | {'owner_id': owner_id}
+            return Response(data)
+        except:
+            raise Http404("No transactions found")
