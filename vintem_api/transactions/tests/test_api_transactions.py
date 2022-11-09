@@ -1,10 +1,8 @@
-import pdb
 from datetime import datetime
-from pytz import timezone as tz
-from unittest import skip
 
 from django.contrib.auth.models import User
 from django.urls import reverse
+from pytz import timezone as tz
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 

@@ -1,11 +1,8 @@
-import pdb
-
 from django.db.models import Sum, Min, Max
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, generics
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from vintem_api.filters import LoggedUserFilter, TransactionClosingFilter, TransactionFilter
 from vintem_api.transactions.models import Transaction, TransactionSerializer
