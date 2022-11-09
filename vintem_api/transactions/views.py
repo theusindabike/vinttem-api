@@ -1,6 +1,6 @@
 import pdb
 
-from django.db.models import Sum
+from django.db.models import Sum, Min, Max
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, generics
 from rest_framework.response import Response
@@ -39,5 +39,10 @@ class TransactionClosing(generics.ListAPIView):
         expenses_total = queryset.filter(type='E').aggregate(expenses_total=Sum('value'))
         incomes_total = queryset.filter(type='I').aggregate(incomes_total=Sum('value'))
 
-        data = expenses_total | incomes_total
+        min_date = queryset.aggregate(min_date=Min('created_at'))
+        max_date = queryset.aggregate(max_date=Max('created_at'))
+
+        owner_id = queryset.first().owner_id
+
+        data = expenses_total | incomes_total | min_date | max_date | {'owner_id': owner_id}
         return Response(data)

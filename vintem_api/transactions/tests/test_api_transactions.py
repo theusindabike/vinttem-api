@@ -11,6 +11,7 @@ from rest_framework.test import APITestCase, APIClient
 from vintem_api.transactions.models import Transaction
 
 TRANSACTION_CREATE_AND_LIST_URL = reverse('transactions:transaction-list')
+TRANSACTION_CLOSING_URL = reverse('transactions:transaction-closing')
 
 
 def create_transaction(self, description='test description', value=1,
@@ -29,12 +30,6 @@ class TransactionAPITest(APITestCase):
         self.user_2 = User.objects.create_user('user_2', 'user_2@email.com', 'user_2_password')
         self.client = APIClient()
 
-        self.client.login(username='user_1', password='user_1_password')
-        self.transaction_1 = create_transaction(self, 'test description 1', 1, Transaction.TransactionType.EXPENSE) \
-            .data
-
-        self.client.logout()
-
     def tearDown(self):
         self.client.logout()
 
@@ -43,7 +38,10 @@ class TransactionAPITest(APITestCase):
         Ensure we can get a transaction object.
         """
         self.client.login(username='user_1', password='user_1_password')
-        url = reverse('transactions:transaction-detail', args=[self.transaction_1.get('id')])
+        transaction_1 = create_transaction(self, 'test description 1', 1, Transaction.TransactionType.EXPENSE) \
+            .data
+
+        url = reverse('transactions:transaction-detail', args=[transaction_1.get('id')])
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,21 +61,33 @@ class TransactionAPITest(APITestCase):
 
         response = self.client.get(TRANSACTION_CREATE_AND_LIST_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('count'), 2)
+        self.assertEqual(response.data.get('count'), 1)
 
-    def test_expenses_sum(self):
+    def test_transactions_closing(self):
         """
         Ensure we can Sum all user expense transactions
         """
         self.client.login(username='user_1', password='user_1_password')
         create_transaction(self, 'test description 4', 4, Transaction.TransactionType.EXPENSE)
+        create_transaction(self, 'test description 5', 5, Transaction.TransactionType.EXPENSE)
 
-        url = reverse('transactions:transaction-closing')
         data = {
             "start_date": datetime.today() - timedelta(days=1),
             "end_date": datetime.today() + timedelta(days=1)
         }
-        response = self.client.get(url, data)
+        response = self.client.get(TRANSACTION_CLOSING_URL, data)
+        self.client.logout()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data.get('expenses_total'), 5)
+        self.assertEqual(response.data.get('expenses_total'), 9)
+        self.assertEqual(response.data.get('owner_id'), self.user_1.id)
+
+        self.client.login(username='user_2', password='user_2_password')
+        create_transaction(self, 'test description 6', 6, Transaction.TransactionType.EXPENSE)
+
+        response = self.client.get(TRANSACTION_CLOSING_URL, data)
+        self.client.logout()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data.get('expenses_total'), 6)
+        self.assertEqual(response.data.get('owner_id'), self.user_2.id)
