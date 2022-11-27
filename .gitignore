@@ -1,6 +1,7 @@
 .env
 .idea
 .vintem_api
+data/
 
 # Django #
 *.log

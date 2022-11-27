@@ -12,12 +12,11 @@ services:
 
   web:
     build: .
-    #command: python manage.py runserver 0.0.0.0:8000
-    command: bash -c "
-        python manage.py migrate &&
-        python manage.py createsuperuser --no-input &&
-        python manage.py runserver 0.0.0.0:8000
-      "
+    command: >
+        bash -c "
+        python manage.py migrate
+        && python manage.py runserver 0.0.0.0:8000
+        "
     volumes:
       - .:/code
     ports:
@@ -25,9 +24,15 @@ services:
     environment:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - DJANGO_SUPERUSER_EMAIL=mlopes.matheus@gmail.com
-      - DJANGO_SUPERUSER_USERNAME=admin
-      - DJANGO_SUPERUSER_PASSWORD=mudar123
+      - POSTGRES_PASSWORD=postgres      
     depends_on:
       - db
+
+  # createsuperuser:
+  #   build: .
+  #   command: python manage.py createsuperuser --no-input
+  #   environment:
+  #     - DJANGO_SUPERUSER_EMAIL=mlopes.matheus@gmail.com
+  #     - DJANGO_SUPERUSER_USERNAME=admin
+  #     - DJANGO_SUPERUSER_PASSWORD=mudar123- name=value
+    
