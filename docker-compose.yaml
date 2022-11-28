@@ -42,4 +42,6 @@ services:
   #     - DJANGO_SUPERUSER_EMAIL=mlopes.matheus@gmail.com
   #     - DJANGO_SUPERUSER_USERNAME=admin
   #     - DJANGO_SUPERUSER_PASSWORD=mudar123
-    
+
+volumes:
+  postgres_data:
