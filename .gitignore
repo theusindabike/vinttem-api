@@ -1,7 +1,8 @@
 .env
 .idea
 .vintem_api
-data/
+postgres-data/
+
 
 # Django #
 *.log

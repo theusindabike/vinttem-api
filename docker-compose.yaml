@@ -1,8 +1,9 @@
 services:
   db:
-    image: postgres
+    image: postgres:alpine
+    restart: always
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./postgres-data/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
@@ -15,24 +16,30 @@ services:
     command: >
         bash -c "
         python manage.py migrate
+        && python manage.py test
         && python manage.py runserver 0.0.0.0:8000
         "
     volumes:
-      - .:/code
+      - .:/usr/src/vinttem-api/
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres      
+    env_file:
+      - ./.env.dev
+    # environment:
+    #   - POSTGRES_NAME=postgres
+    #   - POSTGRES_USER=postgres
+    #   - POSTGRES_PASSWORD=postgres
+    #   - DJANGO_SUPERUSER_EMAIL=mlopes.matheus@gmail.com
+    #   - DJANGO_SUPERUSER_USERNAME=admin
+    #   - DJANGO_SUPERUSER_PASSWORD=mudar123
     depends_on:
       - db
 
   # createsuperuser:
   #   build: .
-  #   command: python manage.py createsuperuser --no-input
+  #   command: && python manage.py createsuperuser --no-input
   #   environment:
   #     - DJANGO_SUPERUSER_EMAIL=mlopes.matheus@gmail.com
   #     - DJANGO_SUPERUSER_USERNAME=admin
-  #     - DJANGO_SUPERUSER_PASSWORD=mudar123- name=value
+  #     - DJANGO_SUPERUSER_PASSWORD=mudar123
     
