@@ -6,10 +6,12 @@ postgres-data/
 **/.env
 **/.aws
 **/.ssh
+**.pem
 Dockerfile
 README.md
 docker-compose.yaml
 **/.DS_Store
 **/venv
+**/.venv
 **/env
 db.sqlite3
