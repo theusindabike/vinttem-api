@@ -1,1 +1,15 @@
 postgres-data/
+**/.git
+**/.gitignore
+**/.vscode
+**/coverage
+**/.env
+**/.aws
+**/.ssh
+Dockerfile
+README.md
+docker-compose.yaml
+**/.DS_Store
+**/venv
+**/env
+db.sqlite3

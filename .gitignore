@@ -1,7 +1,11 @@
 .env
+.env.prod
+.env.prod.db
 .idea
 .vintem_api
 postgres-data/
+.flake8
+.vscode/
 
 
 # Django #

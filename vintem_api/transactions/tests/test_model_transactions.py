@@ -24,4 +24,4 @@ class TransactionModelTest(TestCase):
         self.user.delete()
 
     def test_create(self):
-        self.assertTrue(Transaction.objects.exists())    
+        self.assertTrue(Transaction.objects.exists())
