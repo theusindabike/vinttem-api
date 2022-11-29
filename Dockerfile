@@ -1,23 +1,18 @@
 FROM python:3.9
 
+WORKDIR /app
+
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /usr/src/vinttem-api
+RUN apt-get update \
+    && apt-get install -y netcat
 
-# # install psycopg2 dependencies
-# RUN apt update \
-#     && apt-get postgresql-dev gcc python3-dev musl-dev
+COPY requirements.txt /app
 
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-RUN pip install --upgrade pip
+COPY . /app
 
-COPY requirements.txt /usr/src/vinttem-api/
-RUN pip install -r requirements.txt
-
-COPY . /usr/src/vinttem-api/
-
-RUN sed -i 's/\r$//g' /usr/src/vinttem-api/entrypoint.sh
-RUN chmod +x /usr/src/vinttem-api/entrypoint.sh
-
-ENTRYPOINT ["/usr/src/vinttem-api/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]

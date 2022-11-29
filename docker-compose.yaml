@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres
+    image: postgres:alpine
     restart: always
     volumes:
       - ./postgres-data/db:/var/lib/postgresql/data
@@ -20,7 +20,7 @@ services:
         && python manage.py runserver 0.0.0.0:8000
         "
     volumes:
-      - .:/usr/src/vinttem-api/
+      - .:/app
     ports:
       - "8000:8000"
     env_file:
