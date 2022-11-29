@@ -45,5 +45,5 @@ class TransactionClosing(generics.RetrieveAPIView):
 
             data = expenses_total | incomes_total | min_date | max_date | {'owner_id': owner_id}
             return Response(data)
-        except Transaction.DoesNotExist:
+        except:
             raise Http404("No transactions found")
