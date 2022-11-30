@@ -18,15 +18,43 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.prod.db
-  nginx:
-    build: ./nginx
+  nginx-proxy:
+    container_name: nginx-proxy
+    build: nginx
+    restart: always
+    ports:
+      - 443:443
+      - 80:80
     volumes:
       - static_volume:/app/static_files
-    ports:
-      - 1337:80
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    labels:
+      - com.github.jrcs.letsencrypt_nginx_proxy_companion.docker_gen=true
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
     depends_on:
       - web
+  nginx-proxy-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    env_file:
+      - ./.env.prod.proxy-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - html:/usr/share/nginx/html
+      - vhost:/etc/nginx/vhost.d
+      - acme:/etc/acme.sh
+    # environment:
+    #   - NGINX_DOCKER_GEN_CONTAINER=nginx-gen
+    depends_on:
+      - nginx-proxy
 
 volumes:
   postgres_data:
   static_volume:
+  certs:
+  html:
+  vhost:
+  acme:
