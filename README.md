@@ -1,11 +1,11 @@
-# vintem_api
-- docker-compose
+# vinttem-api
+You just need docker-compose
 
-## Install
+## to-run in devolop mode
 ```console
-git clone git@github.com:theusindabike/vintem_api.git
-cd vintem_api
+git clone git@github.com:theusindabike/vinttem-api.git
+cd vinttem-api
 
-docker-compose up
+docker-compose up --build
 ```
 
