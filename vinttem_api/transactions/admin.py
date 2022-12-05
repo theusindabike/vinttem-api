@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from vintem_api.transactions.models import Transaction
+from vinttem_api.transactions.models import Transaction
 
 
 class TransactionModelAdmin(admin.ModelAdmin):

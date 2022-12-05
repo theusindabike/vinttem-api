@@ -4,8 +4,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, generics
 from rest_framework.response import Response
 
-from vintem_api.filters import LoggedUserFilter, TransactionClosingFilter, TransactionFilter
-from vintem_api.transactions.models import Transaction, TransactionSerializer
+from vinttem_api.filters import LoggedUserFilter, TransactionClosingFilter, TransactionFilter
+from vinttem_api.transactions.models import Transaction, TransactionSerializer
 
 
 class TransactionList(generics.ListCreateAPIView):

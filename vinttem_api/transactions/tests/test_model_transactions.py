@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from vintem_api.transactions.models import Transaction
+from vinttem_api.transactions.models import Transaction
 
 
 class TransactionModelTest(TestCase):

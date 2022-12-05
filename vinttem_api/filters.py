@@ -1,7 +1,7 @@
 from django_filters import FilterSet, NumberFilter, AllValuesFilter, ChoiceFilter, DateFilter
 from rest_framework import filters
 
-from vintem_api.transactions.models import Transaction
+from vinttem_api.transactions.models import Transaction
 
 
 class LoggedUserFilter(filters.BaseFilterBackend):

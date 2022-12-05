@@ -1,4 +1,4 @@
-"""vintem_api URL Configuration
+"""vinttem_api URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -16,10 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-BASE_PATH = 'vintem_api'
+BASE_PATH = 'vinttem_api'
 
 urlpatterns = [
-    path('person/', include(f'{BASE_PATH}.person.urls')),
     path('transactions/', include(f'{BASE_PATH}.transactions.urls')),
     path('admin/', admin.site.urls),
 ]

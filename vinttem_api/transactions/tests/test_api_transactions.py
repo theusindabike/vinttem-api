@@ -6,7 +6,7 @@ from pytz import timezone as tz
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from vintem_api.transactions.models import Transaction
+from vinttem_api.transactions.models import Transaction
 
 TRANSACTION_CREATE_AND_LIST_URL = reverse('transactions:transaction-list')
 TRANSACTION_CLOSING_URL = reverse('transactions:transaction-closing')

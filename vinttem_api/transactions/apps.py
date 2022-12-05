@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class TransactionsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'vintem_api.transactions'
+    name = 'vinttem_api.transactions'
