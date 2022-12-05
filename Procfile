@@ -1,1 +1,0 @@
-web: gunicorn vintem_api.wsgi --log-file -
