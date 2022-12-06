@@ -5,4 +5,5 @@ django-test-without-migrations>=0.6
 djangorestframework>=3.14.0
 python-decouple>=3.6
 psycopg2-binary
+pymysql
 gunicorn>=20.1.0
