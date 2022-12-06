@@ -85,7 +85,20 @@ DATABASES = {
         'USER': config('SQL_USER', default='user'),
         'PASSWORD': config('SQL_PASSWORD', default='password'),
         'HOST': config('SQL_HOST', default='localhost'),
-        'PORT': config('SQL_PORT', default='5432'),
+        #'PORT': config('SQL_PORT', default='5432'),
+        'TEST': {
+            'NAME': config('TEST_SQL_DATABASE', default='localhost'),
+        }
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '<your_username>$<your_database_name>',
+        'USER': '<your_username>',
+        'PASSWORD': '<your_mysql_password>',
+        'HOST': '<your_mysql_hostname>',
     }
 }
 
